@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}business card — futtlecish{% endblock %}
+{% block content %}
+<h1>business card</h1>
+<p><a href="{{ url_for('portfolio.view', username=username) }}">← back to portfolio</a></p>
+
+<p>this is how your card appears on the discovery feed.</p>
+
+<div id="card-toolbar">
+    <button id="btn-add-text">+ text</button>
+    (<span id="text-count">{{ text_count }}</span>/{{ max_texts }}) |
+    <button id="btn-add-link">+ link</button>
+    (<span id="link-count">{{ link_count }}</span>/{{ max_links }}) |
+    <button id="btn-upload-image">{% if card and card.image_url %}change image{% else %}upload image{% endif %}</button>
+    {% if card and card.image_url %}| <button id="btn-remove-image">remove image</button>{% endif %}
+    |
+    <button id="btn-toggle-char">{% if card and card.show_character %}hide character{% else %}show character{% endif %}</button>
+    {% if not has_character %}<span style="font-size:12px;color:#999;">(create one first)</span>{% endif %}
+    |
+    <button id="btn-delete" style="display:none;">delete</button>
+    <button id="btn-z-up" style="display:none;">z+</button>
+    <button id="btn-z-down" style="display:none;">z-</button>
+    | <button id="btn-save">save</button>
+    <span id="save-status"></span>
+    <input type="file" id="card-image-upload" accept="image/*" style="display:none;">
+</div>
+
+<div id="card-canvas" data-username="{{ username }}">
+    {% if card and card.image_url %}
+    <img src="{{ card.image_url }}" class="card-editor-bg" id="card-bg-img">
+    {% endif %}
+    <div id="card-objects">
+        {% if card %}
+        {% for obj in card.objects %}
+        <div class="card-editor-obj" data-obj-id="{{ obj.id }}" data-type="{{ obj.type }}"
+             style="left:{{ obj.x }}px; top:{{ obj.y }}px; width:{{ obj.width }}px; height:{{ obj.height }}px; z-index:{{ obj.z_index }};">
+            {% if obj.type == 'text' %}
+                <span>{{ obj.content }}</span>
+            {% elif obj.type == 'link' %}
+                <span class="card-link-text">{{ obj.content }}</span>
+            {% endif %}
+            <div class="resize-handle"></div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+    {% if card and card.show_character and has_character %}
+    <div id="card-char-indicator">character ✓</div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block head %}
+<style>
+    #card-toolbar {
+        margin: 4px auto 8px auto;
+        padding: 4px 8px;
+        background: #eee;
+        border: 1px solid #ccc;
+        font-size: 13px;
+        text-align: center;
+    }
+    #card-canvas {
+        position: relative;
+        width: 480px;
+        height: 270px;
+        border: 1px solid #ccc;
+        background: #fafafa;
+        overflow: hidden;
+        margin: 8px auto;
+    }
+    .card-editor-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        pointer-events: none;
+    }
+    #card-objects {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+    .card-editor-obj {
+        position: absolute;
+        font-size: 12px;
+        cursor: move;
+        overflow: hidden;
+        padding: 2px;
+    }
+    .card-editor-obj.selected {
+        outline: 1px dashed #7b2d8e;
+    }
+    .card-editor-obj .resize-handle {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 8px;
+        height: 8px;
+        background: #7b2d8e;
+        cursor: se-resize;
+    }
+    .card-link-text {
+        color: #7b2d8e;
+        text-decoration: underline;
+        font-size: 12px;
+    }
+    #card-char-indicator {
+        position: absolute;
+        bottom: 4px;
+        right: 6px;
+        font-size: 11px;
+        color: #999;
+    }
+    #save-status {
+        font-size: 12px;
+        color: #666;
+        margin-left: 8px;
+    }
+
+    body.dark #card-toolbar {
+        background: #2a2a2a;
+        border-color: #444;
+    }
+    body.dark #card-canvas {
+        background: #222;
+        border-color: #444;
+    }
+    body.dark .card-editor-obj.selected {
+        outline-color: #b47cc5;
+    }
+    body.dark .card-editor-obj .resize-handle {
+        background: #b47cc5;
+    }
+    body.dark .card-link-text {
+        color: #6cf;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+var CARD_USERNAME = {{ username | tojson }};
+var MAX_TEXTS = {{ max_texts }};
+var MAX_LINKS = {{ max_links }};
+</script>
+<script src="{{ url_for('static', filename='js/business-card-editor.js') }}"></script>
+{% endblock %}

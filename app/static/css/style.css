@@ -1,0 +1,720 @@
+/* futtlecish — craigslist aesthetic */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #000;
+    background: #fff;
+    line-height: 1.4;
+}
+
+a {
+    color: #7b2d8e;
+    text-decoration: underline;
+}
+
+a:visited {
+    color: #7b2d8e;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+#header {
+    background: #eee;
+    border-bottom: 1px solid #ccc;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#site-title {
+    color: #7b2d8e;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#artist-name {
+    font-size: 15px;
+    font-weight: bold;
+    color: #333;
+    border-left: 1px solid #ccc;
+    padding-left: 12px;
+}
+
+#nav a {
+    font-size: 13px;
+}
+
+/* settings dropdown */
+#settings-wrap {
+    position: relative;
+    display: inline;
+}
+
+#settings-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 6px 0;
+    min-width: 160px;
+    z-index: 1000;
+    margin-top: 4px;
+}
+
+#settings-dropdown.open {
+    display: block;
+}
+
+#settings-dropdown a,
+#settings-dropdown button {
+    display: block;
+    padding: 4px 12px;
+    font-size: 13px;
+    text-align: left;
+    width: 100%;
+    white-space: nowrap;
+}
+
+#settings-dropdown form {
+    margin: 0;
+    text-align: left;
+}
+
+#content {
+    padding: 16px;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#content p {
+    text-align: center;
+}
+
+/* section headers */
+h1, h2, h3 {
+    background: #eee;
+    border: 1px solid #ccc;
+    padding: 4px 8px;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 16px 0 8px 0;
+    text-align: center;
+}
+
+h1 { font-size: 16px; }
+
+/* forms */
+form {
+    margin: 8px 0;
+    text-align: center;
+}
+
+label {
+    display: block;
+    margin: 8px 0 2px 0;
+    font-size: 13px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    border: 1px solid #999;
+    padding: 4px 6px;
+    font-size: 14px;
+    font-family: inherit;
+    width: 250px;
+    display: block;
+    margin: 0 auto;
+}
+
+input[type="file"] {
+    font-size: 13px;
+}
+
+button, input[type="submit"] {
+    background: none;
+    border: none;
+    color: #7b2d8e;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    padding: 0;
+}
+
+button:hover, input[type="submit"]:hover {
+    text-decoration: none;
+}
+
+/* flash messages */
+.flash {
+    padding: 4px 8px;
+    margin: 4px 0;
+    font-size: 13px;
+    text-align: center;
+}
+
+.flash.error {
+    color: #c00;
+}
+
+.flash.success {
+    color: #060;
+}
+
+/* tables */
+table {
+    border-collapse: collapse;
+    margin: 8px auto;
+    font-size: 13px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 4px 8px;
+    text-align: left;
+}
+
+th {
+    background: #eee;
+}
+
+/* discovery feed — business card grid */
+#card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 12px;
+    margin: 12px auto;
+    max-width: 900px;
+}
+
+.card {
+    display: block;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 1px solid #ccc;
+    overflow: hidden;
+    text-decoration: none;
+    color: #000;
+    background: #fafafa;
+}
+
+.card:hover {
+    border-color: #999;
+}
+
+.card:visited {
+    color: #000;
+}
+
+.card-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.card-obj {
+    position: absolute;
+    font-size: 12px;
+    overflow: hidden;
+}
+
+.card-obj-text {
+    color: #000;
+}
+
+.card-obj-link {
+    color: #7b2d8e;
+    text-decoration: underline;
+}
+
+.card-name {
+    position: absolute;
+    bottom: 4px;
+    left: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #000;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 1px 4px;
+}
+
+.card-character {
+    position: absolute;
+    bottom: 4px;
+    right: 6px;
+}
+
+#load-more {
+    text-align: center;
+    padding: 12px;
+    font-size: 13px;
+    color: #666;
+}
+
+/* portfolio canvas */
+#canvas {
+    position: relative;
+    width: 100%;
+    min-height: 600px;
+    border: 1px solid #ccc;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+/* portfolio page — full viewport canvas */
+body.portfolio-page #content {
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+body.portfolio-page #canvas {
+    width: 100%;
+    height: calc(100vh - 38px);
+    min-height: unset;
+    border: none;
+    border-top: 1px solid #ccc;
+}
+
+body.portfolio-page #editor-toolbar {
+    position: fixed;
+    top: 38px;
+    left: 0;
+    right: 0;
+    z-index: 998;
+    margin: 0;
+    border-left: none;
+    border-right: none;
+}
+
+body.portfolio-page #canvas.editing {
+    height: calc(100vh - 68px);
+    margin-top: 30px;
+}
+
+.portfolio-obj {
+    position: absolute;
+    overflow: hidden;
+    text-align: left;
+}
+
+.portfolio-obj img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* scan ripple hover effect on artwork images */
+.portfolio-obj.type-image {
+    overflow: hidden;
+}
+
+.portfolio-obj.type-image::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(123, 45, 142, 0.08) 45%,
+        rgba(123, 45, 142, 0.15) 50%,
+        rgba(123, 45, 142, 0.08) 55%,
+        transparent 100%
+    );
+    pointer-events: none;
+    transition: none;
+}
+
+.portfolio-obj.type-image:hover::after {
+    animation: scan-ripple 1.2s ease-in-out;
+}
+
+@keyframes scan-ripple {
+    0% { top: -100%; }
+    100% { top: 100%; }
+}
+
+/* portfolio settings */
+#portfolio-settings {
+    margin: 8px 0;
+    padding: 8px;
+    border: 1px solid #ccc;
+    background: #fafafa;
+    font-size: 13px;
+}
+
+#portfolio-settings label {
+    display: inline;
+    margin-right: 16px;
+}
+
+/* verify result */
+#verify-result {
+    margin: 8px 0;
+    font-size: 13px;
+    text-align: center;
+}
+
+#verify-result .match-strong {
+    color: #060;
+}
+
+#verify-result .match-degraded {
+    color: #960;
+}
+
+#verify-result .match-none {
+    color: #666;
+}
+
+/* portfolio actions — bottom right */
+#portfolio-actions {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    background: #eee;
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    font-size: 13px;
+    z-index: 999;
+    text-align: right;
+}
+
+/* portfolio editor */
+#canvas.editing {
+    cursor: crosshair;
+    border-style: dashed;
+}
+
+.portfolio-obj.selected {
+    outline: 1px dashed #7b2d8e;
+}
+
+.resize-handle {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background: #7b2d8e;
+    cursor: se-resize;
+}
+
+#canvas.editing .resize-handle {
+    display: block;
+}
+
+#canvas.editing .portfolio-obj {
+    cursor: move;
+}
+
+#editor-toolbar {
+    margin: 4px auto 8px auto;
+    padding: 4px 8px;
+    background: #eee;
+    border: 1px solid #ccc;
+    font-size: 13px;
+    text-align: center;
+}
+
+#save-status {
+    font-size: 12px;
+    color: #666;
+    margin-left: 8px;
+}
+
+/* monospace for IDs/hashes */
+.mono {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+}
+
+/* dark mode */
+body.dark {
+    background: #1a1a1a;
+    color: #ccc;
+}
+
+body.dark a {
+    color: #b47cc5;
+}
+
+body.dark a:visited {
+    color: #b47cc5;
+}
+
+body.dark #header {
+    background: #2a2a2a;
+    border-color: #444;
+}
+
+body.dark #site-title {
+    color: #b47cc5;
+}
+
+body.dark #artist-name {
+    color: #aaa;
+    border-color: #555;
+}
+
+body.dark #settings-dropdown {
+    background: #2a2a2a;
+    border-color: #444;
+}
+
+body.dark h1, body.dark h2, body.dark h3 {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #ccc;
+}
+
+body.dark input[type="text"],
+body.dark input[type="email"],
+body.dark input[type="password"] {
+    background: #2a2a2a;
+    border-color: #555;
+    color: #ccc;
+}
+
+body.dark th {
+    background: #2a2a2a;
+}
+
+body.dark td, body.dark th {
+    border-color: #444;
+}
+
+body.dark button, body.dark input[type="submit"] {
+    color: #b47cc5;
+}
+
+body.dark .card {
+    border-color: #444;
+    background: #222;
+    color: #ccc;
+}
+
+body.dark .card:visited {
+    color: #ccc;
+}
+
+body.dark .card:hover {
+    border-color: #666;
+}
+
+body.dark .card-obj-text {
+    color: #ccc;
+}
+
+body.dark .card-obj-link {
+    color: #b47cc5;
+}
+
+body.dark .card-name {
+    color: #ccc;
+    background: rgba(26, 26, 26, 0.8);
+}
+
+body.dark #canvas {
+    border-color: #444;
+}
+
+body.dark.portfolio-page #canvas {
+    border-top-color: #444;
+}
+
+body.dark #portfolio-settings {
+    background: #222;
+    border-color: #444;
+}
+
+body.dark #portfolio-actions {
+    background: #2a2a2a;
+    border-color: #444;
+}
+
+body.dark #editor-toolbar {
+    background: #2a2a2a;
+    border-color: #444;
+}
+
+body.dark .portfolio-obj.selected {
+    outline-color: #b47cc5;
+}
+
+body.dark .resize-handle {
+    background: #b47cc5;
+}
+
+/* ==================== */
+/* MOBILE RESPONSIVE    */
+/* ==================== */
+
+@media (max-width: 768px) {
+    /* header */
+    #header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding: 8px 12px;
+    }
+
+    #nav {
+        font-size: 12px;
+    }
+
+    /* content */
+    #content {
+        padding: 10px;
+        max-width: 100%;
+    }
+
+    /* forms */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    /* discovery feed — single column on small screens */
+    #card-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    /* tables — horizontal scroll */
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    /* portfolio canvas — touch-friendly, full width */
+    #canvas {
+        min-height: 400px;
+        touch-action: none;
+    }
+
+    #portfolio-actions {
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+
+    /* portfolio settings — stack vertically */
+    #portfolio-settings {
+        font-size: 12px;
+    }
+
+    #portfolio-settings form {
+        display: block;
+        margin: 4px 0;
+    }
+
+    /* editor toolbar — wrap buttons */
+    #editor-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+    }
+
+    /* resize handles — bigger touch targets */
+    .resize-handle {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* character builder — stack frames vertically */
+    #frames {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #frame-a, #frame-b {
+        width: 256px;
+        height: 256px;
+    }
+
+    /* business card editor — fit to screen */
+    #card-canvas {
+        width: 100%;
+        max-width: 480px;
+        height: auto;
+        aspect-ratio: 16 / 9;
+    }
+
+    #card-toolbar {
+        font-size: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .card-editor-obj .resize-handle {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* wanderland — full viewport */
+    #wanderland-wrap {
+        height: calc(100vh - 80px);
+        touch-action: none;
+    }
+}
+
+@media (max-width: 480px) {
+    #card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #frame-a, #frame-b {
+        width: 200px;
+        height: 200px;
+    }
+
+    #preview {
+        width: 48px;
+        height: 48px;
+    }
+
+    #portfolio-settings form {
+        margin: 2px 0;
+    }
+}

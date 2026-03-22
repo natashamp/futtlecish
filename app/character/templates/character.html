@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}character builder — futtlecish{% endblock %}
+{% block content %}
+<h1>character builder</h1>
+<p><a href="{{ url_for('portfolio.view', username=username) }}">← back to portfolio</a></p>
+
+<h2>color palette</h2>
+<div id="palette"></div>
+
+<h2>frame A / frame B</h2>
+<div id="frames">
+    <div class="frame-wrap">
+        <canvas id="frame-a" width="320" height="320"></canvas>
+        <p>frame A</p>
+    </div>
+    <div class="frame-wrap">
+        <canvas id="frame-b" width="320" height="320"></canvas>
+        <p>frame B</p>
+    </div>
+    <div class="frame-wrap">
+        <canvas id="preview" width="64" height="64"></canvas>
+        <p>preview</p>
+    </div>
+</div>
+
+<p>
+    <button id="btn-copy-ab">copy A → B</button> |
+    <button id="btn-clear-a">clear A</button> |
+    <button id="btn-clear-b">clear B</button> |
+    <button id="btn-save">save</button>
+    <span id="save-status"></span>
+</p>
+
+{% endblock %}
+
+{% block head %}
+<style>
+    #palette {
+        display: flex;
+        gap: 4px;
+        margin: 4px auto 8px auto;
+        justify-content: center;
+    }
+    .swatch {
+        width: 28px;
+        height: 28px;
+        border: 2px solid #ccc;
+        cursor: pointer;
+    }
+    .swatch.active {
+        border-color: #7b2d8e;
+        outline: 1px solid #7b2d8e;
+    }
+    #frames {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        margin: 8px auto;
+        justify-content: center;
+    }
+    .frame-wrap {
+        text-align: center;
+    }
+    .frame-wrap p {
+        font-size: 12px;
+        color: #666;
+        margin-top: 4px;
+    }
+    #frame-a, #frame-b {
+        border: 1px solid #ccc;
+        cursor: crosshair;
+        image-rendering: pixelated;
+    }
+    #preview {
+        border: 1px solid #ccc;
+        image-rendering: pixelated;
+    }
+    #save-status {
+        font-size: 12px;
+        color: #666;
+        margin-left: 8px;
+    }
+
+    body.dark .swatch {
+        border-color: #555;
+    }
+    body.dark .swatch.active {
+        border-color: #b47cc5;
+        outline-color: #b47cc5;
+    }
+    body.dark #frame-a, body.dark #frame-b, body.dark #preview {
+        border-color: #444;
+    }
+    body.dark .frame-wrap p {
+        color: #888;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+var INITIAL_A = {{ frame_a | tojson if frame_a else 'null' }};
+var INITIAL_B = {{ frame_b | tojson if frame_b else 'null' }};
+var USERNAME = {{ username | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/character-builder.js') }}"></script>
+{% endblock %}

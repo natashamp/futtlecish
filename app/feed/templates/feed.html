@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}futtlecish{% endblock %}
+{% block content %}
+<h1>futtlecish</h1>
+
+<div id="card-grid">
+    {% for portfolio in portfolios %}
+    <a href="/portfolio/{{ portfolio.user.username }}" class="card">
+        {% set card = portfolio.user.business_card %}
+        {% if card and card.image_url %}
+        <img src="{{ card.image_url }}" class="card-bg">
+        {% endif %}
+        <div class="card-content">
+            {% if card %}
+                {% if card.show_character and portfolio.user.character and portfolio.user.character.frame_a %}
+                <canvas class="card-character" data-frame='{{ portfolio.user.character.frame_a | tojson }}' width="48" height="48"></canvas>
+                {% endif %}
+                {% for obj in card.objects %}
+                <div class="card-obj card-obj-{{ obj.type }}"
+                     style="left:{{ obj.x }}px; top:{{ obj.y }}px; width:{{ obj.width }}px; height:{{ obj.height }}px; z-index:{{ obj.z_index }};">
+                    {{ obj.content }}
+                </div>
+                {% endfor %}
+            {% endif %}
+            <span class="card-name">{{ portfolio.user.display_name }}</span>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+{% if not portfolios %}
+<p>no artists yet.</p>
+{% endif %}
+
+<div id="load-more" style="display:none;">loading...</div>
+
+<hr>
+
+<h2>verify image ownership</h2>
+<form id="verify-form" enctype="multipart/form-data">
+    <label>upload a suspect image to check if it was protected on futtlecish</label>
+    <br>
+    <input type="file" name="image" accept="image/*" required>
+    <br><br>
+    <input type="submit" value="verify">
+</form>
+<div id="verify-result"></div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    var offset = {{ portfolios|length }};
+    var loading = false;
+    var done = false;
+    var grid = document.getElementById('card-grid');
+    var loadMore = document.getElementById('load-more');
+
+    window.addEventListener('scroll', function() {
+        if (loading || done) return;
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
+            loading = true;
+            loadMore.style.display = 'block';
+            fetch('/feed/more?offset=' + offset)
+                .then(function(r) { return r.json(); })
+                .then(function(cards) {
+                    if (cards.length === 0) {
+                        done = true;
+                        loadMore.style.display = 'none';
+                        return;
+                    }
+                    cards.forEach(function(c) {
+                        var a = document.createElement('a');
+                        a.href = '/portfolio/' + c.username;
+                        a.className = 'card';
+                        var html = '';
+                        if (c.image_url) {
+                            html += '<img src="' + c.image_url + '" class="card-bg">';
+                        }
+                        html += '<div class="card-content">';
+                        c.objects.forEach(function(o) {
+                            html += '<div class="card-obj card-obj-' + o.type + '" style="left:' + o.x + 'px;top:' + o.y + 'px;width:' + o.width + 'px;height:' + o.height + 'px;z-index:' + o.z_index + ';">' + o.content + '</div>';
+                        });
+                        html += '<span class="card-name">' + c.display_name + '</span>';
+                        html += '</div>';
+                        a.innerHTML = html;
+                        grid.appendChild(a);
+                    });
+                    offset += cards.length;
+                    loading = false;
+                    loadMore.style.display = 'none';
+                });
+        }
+    });
+
+    // render character pixels on card canvases
+    document.querySelectorAll('.card-character').forEach(function(canvas) {
+        var frame = JSON.parse(canvas.dataset.frame);
+        var ctx = canvas.getContext('2d');
+        var px = 3;
+        for (var y = 0; y < 16; y++) {
+            for (var x = 0; x < 16; x++) {
+                if (frame[y] && frame[y][x]) {
+                    ctx.fillStyle = frame[y][x];
+                    ctx.fillRect(x * px, y * px, px, px);
+                }
+            }
+        }
+    });
+
+    // verify form AJAX
+    var verifyForm = document.getElementById('verify-form');
+    var verifyResult = document.getElementById('verify-result');
+    verifyForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        verifyResult.textContent = 'processing...';
+        var formData = new FormData(verifyForm);
+        fetch('/verify', { method: 'POST', body: formData })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.status === 'strong') {
+                    verifyResult.innerHTML = '<span class="match-strong">match found — this image belongs to <a href="/portfolio/' + data.username + '">' + data.display_name + '</a>. title: ' + data.title + '. protected on: ' + data.encoded_at + '</span>';
+                } else if (data.status === 'degraded') {
+                    verifyResult.innerHTML = '<span class="match-degraded">' + data.certainty + '% likely belongs to <a href="/portfolio/' + data.username + '">' + data.username + '</a></span>';
+                } else {
+                    verifyResult.innerHTML = '<span class="match-none">no watermark found</span>';
+                }
+            })
+            .catch(function() {
+                verifyResult.textContent = 'error checking image.';
+            });
+    });
+})();
+</script>
+{% endblock %}

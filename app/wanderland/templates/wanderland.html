@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}wanderland — futtlecish{% endblock %}
+{% block head %}
+<style>
+    #wanderland-wrap {
+        position: relative;
+        width: 100%;
+        height: calc(100vh - 60px);
+        overflow: hidden;
+        border: 1px solid #ccc;
+        cursor: crosshair;
+        background: #fefefe;
+    }
+    #wanderland-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        image-rendering: pixelated;
+    }
+    #wanderland-info {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        font-size: 11px;
+        color: #999;
+        pointer-events: none;
+    }
+    #wanderland-msg {
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        font-size: 13px;
+        color: #666;
+    }
+    {% if not has_character %}
+    #no-char-notice {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        font-size: 14px;
+    }
+    {% endif %}
+
+    body.dark #wanderland-wrap {
+        border-color: #444;
+        background: #1a1a1a;
+    }
+    body.dark #wanderland-info {
+        color: #666;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="wanderland-wrap">
+    <canvas id="wanderland-canvas"></canvas>
+    <div id="wanderland-info">wanderland — <span id="user-count">0</span> artists online</div>
+    <div id="wanderland-msg"></div>
+    {% if not has_character %}
+    <div id="no-char-notice">
+        <p>you don't have a character yet.</p>
+        <p><a href="{{ url_for('character.index', username=username) }}">create one</a> to join wanderland.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+var USER_ID = {{ user_id | tojson }};
+var USERNAME = {{ username | tojson }};
+var DISPLAY_NAME = {{ display_name | tojson }};
+var HAS_CHARACTER = {{ has_character | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/wanderland.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}login — futtlecish{% endblock %}
+{% block content %}
+<h1>login</h1>
+<form method="POST">
+    <label>username</label>
+    <input type="text" name="username" required>
+
+    <label>password</label>
+    <input type="password" name="password" required>
+
+    <br><br>
+    <input type="submit" value="login">
+</form>
+<p>don't have an account? <a href="{{ url_for('auth.register') }}">register</a></p>
+{% endblock %}
